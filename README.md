@@ -1,6 +1,6 @@
 # Drawing App with Fabric.js
 
-A powerful web-based drawing application built with Fabric.js that supports pressure sensitivity, layers, and various drawing tools.
+A powerful web-based drawing application built with Fabric.js that supports layers, and various drawing tools.
 
 ## 🌟 Features
 
@@ -17,21 +17,20 @@ A powerful web-based drawing application built with Fabric.js that supports pres
   - Adjustable brush size
   - Color picker
   - Opacity control
-- 📱 Pressure sensitivity support:
-  - Works with Wacom tablets
-  - Compatible with other pressure-sensitive devices
 - ↩️ Undo/Redo functionality
 - 🧹 Canvas clearing
 - 🖱️ Custom cursor support
 
+- ## 🚀 Live Demo
+
+[View Live Demo](https://lizaveta-lv.github.io/CollabDraw/)
+
 - ## 💻 Installation
 
 1. Clone the repository:
-`bash
-git clone https://github.com/your-username/drawing-app.git`
+`git clone https://github.com/your-username/drawing-app.git`
 2. Navigate to the project directory:
-`bash
-cd drawing-app`
+`cd drawing-app`
 3. Open `index.html` in your web browser
 
 ## 🛠️ Technologies Used
