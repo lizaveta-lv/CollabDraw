@@ -39,7 +39,7 @@ const canvas = new fabric.Canvas('canvas', {
 // Initialize Socket.io connection
 let socket;
 try {
-    const serverUrl = "https://fabric-websocket-app.herokuapp.com";  // This is your Heroku app URL
+    const serverUrl = "https://fabric-websocket-app-a840df0c5fa5.herokuapp.com";
     console.log('Attempting to connect to:', serverUrl);
     
     socket = io(serverUrl, {
