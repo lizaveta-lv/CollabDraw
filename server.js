@@ -30,9 +30,19 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Add this before your socket.io setup
+// Update the health check route
 app.get('/health', (req, res) => {
-    res.status(200).send('OK');
+    console.log('Health check requested');
+    res.status(200).json({
+        status: 'OK',
+        timestamp: new Date(),
+        uptime: process.uptime()
+    });
+});
+
+// Add a catch-all route
+app.get('*', (req, res) => {
+    res.status(404).send('Route not found');
 });
 
 const server = http.createServer(app);
