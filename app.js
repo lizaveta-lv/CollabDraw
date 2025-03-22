@@ -39,28 +39,37 @@ const canvas = new fabric.Canvas('canvas', {
 // Initialize Socket.io connection
 let socket;
 try {
-    socket = io("https://your-heroku-app-name.herokuapp.com", {
-        transports: ['websocket'],
-        upgrade: false,
+    const serverUrl = "https://fabric-websocket-app.herokuapp.com";  // This is your Heroku app URL
+    console.log('Attempting to connect to:', serverUrl);
+    
+    socket = io(serverUrl, {
+        transports: ['websocket', 'polling'],
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
-        timeout: 10000
+        timeout: 10000,
+        forceNew: true,
+        withCredentials: false
     });
 
     socket.on('connect', () => {
-        console.log('Connected to server');
+        console.log('Connected to server successfully');
         connectionStatus.textContent = 'Connected';
         connectionStatus.className = 'connection-status connected';
     });
 
     socket.on('connect_error', (error) => {
-        console.error('Connection error:', error);
-        connectionStatus.textContent = 'Connection Failed';
+        console.error('Connection error details:', {
+            message: error.message,
+            description: error.description,
+            context: error.context,
+            type: error.type
+        });
+        connectionStatus.textContent = 'Connection Failed - Retrying...';
         connectionStatus.className = 'connection-status disconnected';
     });
 
-    socket.on('disconnect', () => {
-        console.log('Disconnected from server');
+    socket.on('disconnect', (reason) => {
+        console.log('Disconnected from server. Reason:', reason);
         connectionStatus.textContent = 'Disconnected';
         connectionStatus.className = 'connection-status disconnected';
     });
