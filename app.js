@@ -37,25 +37,37 @@ const canvas = new fabric.Canvas('canvas', {
 });
 
 // Initialize Socket.io connection
-const socket = io("https://fabric-websocket-app.herokuapp.com", {
-    transports: ['websocket'],
-    upgrade: false
-});
+let socket;
+try {
+    socket = io("https://your-heroku-app-name.herokuapp.com", {
+        transports: ['websocket'],
+        upgrade: false,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        timeout: 10000
+    });
 
-// Add error handling and reconnection logic
-socket.on('connect', () => {
-    console.log('Connected to server');
-});
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        connectionStatus.textContent = 'Connected';
+        connectionStatus.className = 'connection-status connected';
+    });
 
-socket.on('connect_error', (error) => {
-    console.error('Connection error:', error);
-    alert('Failed to connect to server. Please try again later.');
-});
+    socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+        connectionStatus.textContent = 'Connection Failed';
+        connectionStatus.className = 'connection-status disconnected';
+    });
 
-socket.on('disconnect', () => {
-    console.log('Disconnected from server');
-    alert('Lost connection to server. Please refresh the page.');
-});
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+        connectionStatus.textContent = 'Disconnected';
+        connectionStatus.className = 'connection-status disconnected';
+    });
+} catch (error) {
+    console.error('Socket initialization error:', error);
+    alert('Failed to initialize connection. Please refresh the page.');
+}
 
 // Add UI elements for room management
 const createRoomBtn = document.getElementById('createRoom');

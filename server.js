@@ -19,7 +19,17 @@ app.get('/', (req, res) => {
 
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "*" }, // Allow any frontend to connect
+    cors: {
+        origin: ["https://lizaveta-lv.github.io", "http://localhost:3000"],
+        methods: ["GET", "POST"],
+        credentials: true,
+        transports: ['websocket']
+    }
+});
+
+// Add these near the top of your server.js
+io.engine.on("connection_error", (err) => {
+    console.log('Connection error:', err);
 });
 
 // Manage rooms and canvas states
@@ -27,6 +37,10 @@ const rooms = {};
 
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
+
+    socket.on("error", (error) => {
+        console.error('Socket error:', error);
+    });
 
     // Handle creating a room
     socket.on("createRoom", ({ width, height, canvasColor }, callback) => {
