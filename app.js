@@ -37,7 +37,25 @@ const canvas = new fabric.Canvas('canvas', {
 });
 
 // Initialize Socket.io connection
-const socket = io();
+const socket = io("https://fabric-websocket-app.herokuapp.com", {
+    transports: ['websocket'],
+    upgrade: false
+});
+
+// Add error handling and reconnection logic
+socket.on('connect', () => {
+    console.log('Connected to server');
+});
+
+socket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+    alert('Failed to connect to server. Please try again later.');
+});
+
+socket.on('disconnect', () => {
+    console.log('Disconnected from server');
+    alert('Lost connection to server. Please refresh the page.');
+});
 
 // Add UI elements for room management
 const createRoomBtn = document.getElementById('createRoom');
@@ -113,6 +131,11 @@ function initEraser() {
     
     // Add eraser-specific path:created handler
     canvas.on('path:created', function(event) {
+        if (!socket.connected) {
+            alert('Lost connection to server. Your changes may not be saved.');
+            return;
+        }
+
         const eraserPath = event.path;
         canvas.remove(eraserPath);
         
@@ -169,6 +192,11 @@ pencilBtn.addEventListener('click', () => {
     
     // Add back the original drawing handler
     canvas.on('path:created', function(event) {
+        if (!socket.connected) {
+            alert('Lost connection to server. Your changes may not be saved.');
+            return;
+        }
+
         const path = event.path;
         path.selectable = false;
         path.evented = false;
@@ -215,6 +243,11 @@ brushBtn.addEventListener('click', () => {
     
     // Add back the original drawing handler
     canvas.on('path:created', function(event) {
+        if (!socket.connected) {
+            alert('Lost connection to server. Your changes may not be saved.');
+            return;
+        }
+
         const path = event.path;
         path.selectable = false;
         path.evented = false;
@@ -378,6 +411,11 @@ closeModal.addEventListener('click', () => {
 
 // Update room creation handler
 confirmCreateRoom.addEventListener('click', () => {
+    if (!socket.connected) {
+        alert('Not connected to server. Please refresh the page.');
+        return;
+    }
+
     const width = parseInt(canvasWidthInput.value);
     const height = parseInt(canvasHeightInput.value);
     const canvasColor = document.getElementById('canvasColor').value;
@@ -438,6 +476,11 @@ window.addEventListener('click', (event) => {
 
 // Handle drawing events with coordinate transformation
 canvas.on('path:created', function(event) {
+    if (!socket.connected) {
+        alert('Lost connection to server. Your changes may not be saved.');
+        return;
+    }
+
     const path = event.path;
     path.selectable = false;
     path.evented = false;
@@ -760,13 +803,13 @@ const history = {
 undoBtn.addEventListener('click', () => history.undo());
 redoBtn.addEventListener('click', () => history.redo());
 
-// Add error handling for socket connection
-socket.on('connect_error', (err) => {
-    alert('Connection error: ' + err.message);
-});
-
 // Update join room handler
 joinRoomBtn.addEventListener('click', () => {
+    if (!socket.connected) {
+        alert('Not connected to server. Please refresh the page.');
+        return;
+    }
+
     const roomCode = roomCodeInput.value.trim();
     socket.emit('joinRoom', roomCode, ({ success, width, height, canvasColor, message }) => {
         if (success) {
@@ -880,4 +923,20 @@ function setActiveButton(activeBtn) {
         btn.classList.remove('active');
     });
     activeBtn.classList.add('active');
-} 
+}
+
+// Add this near the top of your file
+const connectionStatus = document.createElement('div');
+connectionStatus.className = 'connection-status';
+document.body.appendChild(connectionStatus);
+
+// Update connection status
+socket.on('connect', () => {
+    connectionStatus.textContent = 'Connected';
+    connectionStatus.className = 'connection-status connected';
+});
+
+socket.on('disconnect', () => {
+    connectionStatus.textContent = 'Disconnected';
+    connectionStatus.className = 'connection-status disconnected';
+}); 
