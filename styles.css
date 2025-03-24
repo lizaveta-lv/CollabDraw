@@ -245,36 +245,6 @@ body {
     position: relative !important;
 }
 
-.zoom-slider {
-    width: 40px;
-    writing-mode: bt-lr;
-    -webkit-appearance: slider-vertical;
-    height: 100px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 8px 0;
-    margin: 10px 0;
-}
-
-.zoom-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #2196f3;
-    cursor: pointer;
-}
-
-.zoom-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #2196f3;
-    cursor: pointer;
-    border: none;
-}
-
 .room-controls {
     position: fixed;
     bottom: 20px;
